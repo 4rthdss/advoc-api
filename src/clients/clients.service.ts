@@ -14,6 +14,7 @@ export class ClientsService {
       name: createClientDto.name,
       email: createClientDto.email,
       cpf: createClientDto.cpf,
+      phone: createClientDto.phone,
     };
     this.id = this.id + 1;
     this.clients.push(newClient);

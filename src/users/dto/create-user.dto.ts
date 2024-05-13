@@ -1,7 +1,5 @@
-export class Client {
-  id: number;
+export class CreateUserDto {
   name: string;
   email: string;
-  cpf: string;
   phone: string;
 }
