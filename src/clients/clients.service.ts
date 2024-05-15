@@ -13,8 +13,11 @@ export class ClientsService {
       id: this.id,
       name: createClientDto.name,
       email: createClientDto.email,
+      birthday: createClientDto.birthday,
       cpf: createClientDto.cpf,
-      phone: createClientDto.phone,
+      road: createClientDto.road,
+      neighborhood: createClientDto.neighborhood,
+      city: createClientDto.city,
     };
     this.id = this.id + 1;
     this.clients.push(newClient);
