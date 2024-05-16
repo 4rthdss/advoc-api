@@ -2,45 +2,59 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ClientsService {
-  private readonly clients: Client[] = [];
-  private id = 1;
+  @InjectRepository(Client)
+  private readonly repository: Repository<Client>;
 
-  create(createClientDto: CreateClientDto) {
-    const newClient = {
-      id: this.id,
-      name: createClientDto.name,
-      email: createClientDto.email,
-      birthday: createClientDto.birthday,
-      cpf: createClientDto.cpf,
-      road: createClientDto.road,
-      neighborhood: createClientDto.neighborhood,
-      city: createClientDto.city,
-    };
-    this.id = this.id + 1;
-    this.clients.push(newClient);
-    return newClient;
+  public create(body: CreateClientDto): Promise<Client> {
+    const client: Client = new Client();
+
+    Object.assign(client, {
+      name: body.name,
+      email: body.email,
+      birthday: body.birthday,
+      cpf: body.cpf,
+      road: body.road,
+      neighborhood: body.neighborhood,
+      city: body.city,
+    });
+
+    return this.repository.save(client);
   }
 
-  findAll() {
-    return this.clients;
+  public findAll(): Promise<Client[]> {
+    return this.repository.find();
   }
 
-  findOne(id: number) {
-    const client = this.clients.find((client) => client.id == id);
+  public findOne(id: string): Promise<Client> {
+    return this.repository.findOne({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  public async update(id: string, body: UpdateClientDto): Promise<Client> {
+    const client = await this.findOne(id);
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
+    Object.assign(client, body);
+
+    return await this.repository.save(client);
+  }
+
+  public async remove(id: string): Promise<void> {
+    const client = await this.findOne(id);
     if (!client) {
       throw new NotFoundException('Client not found');
     }
-    return client;
-  }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+    await this.repository.remove(client);
   }
 }
