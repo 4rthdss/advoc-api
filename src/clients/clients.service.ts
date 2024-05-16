@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { Client } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import validators from 'src/util/validators';
 
 @Injectable()
 export class ClientsService {
@@ -12,6 +17,13 @@ export class ClientsService {
 
   public create(body: CreateClientDto): Promise<Client> {
     const client: Client = new Client();
+    if (!validators.isValidEmail(body.email)) {
+      throw new BadRequestException('Invalid email address');
+    }
+
+    if (!validators.isValidCPF(body.cpf)) {
+      throw new BadRequestException('Invalid CPF');
+    }
 
     Object.assign(client, {
       name: body.name,
@@ -42,6 +54,14 @@ export class ClientsService {
     const client = await this.findOne(id);
     if (!client) {
       throw new Error('Client not found');
+    }
+
+    if (body.email && !validators.isValidEmail(body.email)) {
+      throw new BadRequestException('Invalid email address');
+    }
+
+    if (body.cpf && !validators.isValidCPF(body.cpf)) {
+      throw new BadRequestException('Invalid CPF');
     }
 
     Object.assign(client, body);
