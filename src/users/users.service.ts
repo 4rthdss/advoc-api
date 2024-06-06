@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import validators from 'src/util/validators';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -51,5 +52,14 @@ export class UsersService {
     }
 
     await this.repository.remove(user);
+  }
+
+  public async login(body: LoginUserDto): Promise<void> {
+    const user = await this.repository.findOne({
+      where: { email: body.email, password: body.password },
+    });
+    if (!user) {
+      throw new BadRequestException('Login inválido');
+    }
   }
 }
