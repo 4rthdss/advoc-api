@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { ConfigModule } from '@nestjs/config';
+import { PdfModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ClientsModule,
     UsersModule,
+    PdfModule,
   ],
   controllers: [AppController],
   providers: [AppService],
