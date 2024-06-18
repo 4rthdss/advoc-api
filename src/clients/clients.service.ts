@@ -29,7 +29,7 @@ export class ClientsService {
       name: body.name,
       email: body.email,
       birthday: body.birthday,
-      cpf: body.cpf,
+      cpf: body.cpf.replace(/[^\d]/g, ''),
       road: body.road,
       neighborhood: body.neighborhood,
       city: body.city,
