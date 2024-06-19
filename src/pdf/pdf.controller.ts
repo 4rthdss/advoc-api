@@ -1,19 +1,22 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { PdfService } from './pdf.service';
 import { CreatePdfDto } from './dto/create-pdf.dto';
 import { Pdf } from './entities/pdf.entity';
 
 @Controller('pdf')
 export class PdfController {
-  constructor(private readonly pdfService: PdfService) {}
+  @Inject(PdfService)
+  private readonly pdfService: PdfService;
+  pdfs: Pdf[] = [];
 
   @Post()
-  async create(@Body() pdf: CreatePdfDto) {
+  create(@Body() pdf: CreatePdfDto) {
+    this.pdfs.push(pdf);
     return this.pdfService.savePdf(pdf);
   }
 
   @Get()
-  async read(): Promise<Pdf[]> {
-    return this.pdfService.getPdfs();
+  read(): Pdf[] {
+    return this.pdfs;
   }
 }
